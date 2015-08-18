@@ -48,6 +48,10 @@ that the repository name is in front of your shell promt now.
         export LC_ALL=en_US.UTF-8
         export LANG=en_US.UTF-8
 
+7. Run the flask app on port 5000 by default.
+
+        python run.py
+
 ### Windows
 
 1. Create a virtual environment inside the repository root by runnning
