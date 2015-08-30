@@ -13,16 +13,22 @@ def read_lines(filename):
         return file_.read().splitlines()
 
 
-def images_and_metadata(uris, directory, skip=True):
+def images_and_metadata(uris, directory, skip=True, observer=None):
     """
     For each uri fetch metadata from DBpedia and their image files from
     Wikimedia Commons. Uris can be either Wikimedia Commons or DBpedia Commons
     resources.
     """
+    previous_progress = 0
+    if observer != None:
+        previous_progress = observer.current
     uris = list(set(uris))
     overall = len(uris)
     for index, uri in enumerate(uris):
         name = remove_prefix(os.path.basename(uri), 'File:')
+        if observer != None:
+            progress = previous_progress + index / overall * 60
+            observer.update(progress)
         print('Image {index}/{overall}: {name}'.format(**locals()))
         uri = ensure_dbpedia_resource(uri)
         metadata = fetch_metadata(uri)

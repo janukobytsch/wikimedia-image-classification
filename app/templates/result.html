@@ -129,16 +129,25 @@
             return nanobar;
         }
 
+        function show_notice(num_images) {
+            if (num_images == 0) {
+                $('.empty').fadeIn(200);
+            } else {
+                $('.empty').hide();
+            }
+        }
+
         function show_result(data) {
             if ('result' in data) {
                 $('#bg-task-results').fadeIn(500);
                 if (data['result'].length > 0) {
                     for (var result in data['result']) {
                         var dict = data['result'][result];
-                        var element = $('<a href="' + dict['thumbnail'] + '" title="' + dict['title'] + '" data-label="' + dict['label'] + '" data-gallery><img width="200" height="200" src="' + dict['thumbnail'] + '" alt="' + dict['title'] + '"></a>');
+                        var element = $('<a href="' + dict['image'] + '" title="' + dict['title'] + '" data-label="' + dict['label'] + '" data-gallery><img width="200" height="200" src="' + dict['thumbnail'] + '" alt="' + dict['title'] + '"></a>');
                         $('#gallery-elements').append(element);
                     }
                 }
+                show_notice(data['result'].length);
             } else {
                 alert('Woops, something went wrong!');
             }
@@ -180,11 +189,7 @@
                     $(this).fadeOut(200);
                 }
             });
-            if (num_filtered == 0) {
-                $('.empty').fadeIn(200);
-            } else {
-                $('.empty').hide();
-            }
+            show_notice(num_filtered)
         });
 
         $(function() {
