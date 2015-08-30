@@ -3,6 +3,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 
 METADATA = {
     'url': 'http://dbpedia.org/ontology/fileURL',
+    'thumbnail': 'http://dbpedia.org/ontology/thumbnail',
     'extension': 'http://dbpedia.org/ontology/fileExtension',
     'title': 'http://dbpedia.org/ontology/title',
     'description': 'http://commons.dbpedia.org/property/description',

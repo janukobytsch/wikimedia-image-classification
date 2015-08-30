@@ -13,6 +13,20 @@ def read_lines(filename):
         return file_.read().splitlines()
 
 
+def image_urls(uris):
+    thumbnails = []
+    overall = len(uris)
+    for index, uri in enumerate(uris):
+        name = remove_prefix(os.path.basename(uri), 'File:')
+        print('Image {index}/{overall}: {name}'.format(**locals()))
+        uri = ensure_dbpedia_resource(uri)
+        metadata = fetch_metadata(uri)
+        if not metadata:
+            continue
+        thumbnails.append(metadata['thumbnail'])
+    return thumbnails
+
+
 def images_and_metadata(uris, directory):
     """
     For each uri fetch metadata from DBpedia and their image files from
