@@ -27,7 +27,7 @@ def image_urls(uris):
     return thumbnails
 
 
-def images_and_metadata(uris, directory):
+def images_and_metadata(uris, directory, skip=True):
     """
     For each uri fetch metadata from DBpedia and their image files from
     Wikimedia Commons. Uris can be either Wikimedia Commons or DBpedia Commons
@@ -40,7 +40,7 @@ def images_and_metadata(uris, directory):
         print('Image {index}/{overall}: {name}'.format(**locals()))
         uri = ensure_dbpedia_resource(uri)
         metadata = fetch_metadata(uri)
-        if not metadata or not metadata['description']:
+        if skip and (not metadata or not metadata['description']):
             print('Skip image without description')
             continue
         try:

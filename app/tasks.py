@@ -1,9 +1,21 @@
 from app import app, celery
 from flask import copy_current_request_context
 from helper.dbpedia import fetch_uris_from_metadata
-from fetch_commons import image_urls
-
-# todo customize limit
+from fetch_commons import image_urls, images_and_metadata
+from extraction import read_samples
+from helper.dataset import Dataset
+from feature.color import ColorFeature
+from feature.histogram import HistogramFeature
+from feature.blob import BlobFeature
+from feature.gradient import GradientFeature
+from feature.face import FaceFeature
+from feature.brief import BriefFeature
+from feature.geo import GeoFeature
+from feature.format import FormatFeature
+from feature.size import SizeFeature
+from feature.words import WordsFeature
+from feature.random import RandomFeature
+import os
 
 
 def start_context_aware_task(func, kwargs={}):
@@ -30,39 +42,41 @@ def update_progress(self, progress=0, total=100):
 
 
 @celery.task(bind=True)
-def fetch_uris_by_keyword(self, keywords=[]):
+def classify_images(self, keywords=[]):
     if not len(keywords):
         raise AssertionError
     with app.app_context():
-        update_progress(self, 25)
+        update_progress(self, 10)
+        # step 1 - query dpedia for related images based on given keywords
         uris = fetch_uris_from_metadata(keywords, 5)
+        update_progress(self, 25)
+        # step 2 - download images and metadata into temp folder with unique task id
+        temp_folder = os.path.join(app.config['DOWNLOAD_DIRECTORY'], classify_images.request.id)
+        dataset_file = os.path.join(temp_folder, 'dataset.json')
+        images_and_metadata(uris, temp_folder, False)
         update_progress(self, 50)
-        urls = image_urls(uris)
+        # step 3 - load dataset and extract features
+        extractors = []
+        extractors.append(SizeFeature())
+        extractors.append(ColorFeature())
+        extractors.append(HistogramFeature())
+        extractors.append(GradientFeature())
+        # todo this is not working yet, because dataset expects subdirectories for each category
+        # solution: read individual samples and extract feature vectors
+        dataset = Dataset(logging=True)
+        dataset.read(temp_folder, extractors)
+        dataset.save(dataset_file)
         update_progress(self, 75)
+        # step 4 - use trained classifier to predict class
+        # todo
+        # step 5 - return list of url and prediced category pairs
+        # todo
+        # return the original, uncategorized image urls for now
+        urls = image_urls(uris)
         result = {
             'current': 100,
             'total': 100,
             'result': urls
         }
+        update_progress(self, 100)
         return result
-
-
-# @celery.task(bind=True)
-# def random_task(self):
-#     """Background task that runs a long function with progress reports."""
-#     verb = ['Starting up', 'Booting', 'Repairing', 'Loading', 'Checking']
-#     adjective = ['master', 'radiant', 'silent', 'harmonic', 'fast']
-#     noun = ['solar array', 'particle reshaper', 'cosmic ray', 'orbiter', 'bit']
-#     message = ''
-#     total = random.randint(10, 50)
-#     for i in range(total):
-#         if not message or random.random() < 0.25:
-#             message = '{0} {1} {2}...'.format(random.choice(verb),
-#                                               random.choice(adjective),
-#                                               random.choice(noun))
-#         self.update_state(state='PROGRESS',
-#                           meta={'current': i, 'total': total,
-#                                 'status': message})
-#         time.sleep(1)
-#     return {'current': 100, 'total': 100, 'status': 'Task completed!',
-#             'result': 42}

@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, jsonify
 from app import app, celery
 from .forms import SuggestForm
-from .tasks import start_context_aware_task, fetch_uris_by_keyword
+from .tasks import start_context_aware_task, classify_images
 
 
 @app.route('/')
@@ -19,7 +19,7 @@ def suggest():
         keywords = (form.keywords.data).split()
         task_args = {'keywords': keywords}
         task = start_context_aware_task(
-            fetch_uris_by_keyword,
+            classify_images,
             kwargs=task_args
         )
         status_url = url_for('.status', task_id=task.id)
@@ -30,7 +30,7 @@ def suggest():
 
 @app.route('/status/<task_id>')
 def status(task_id):
-    task = fetch_uris_by_keyword.AsyncResult(task_id)
+    task = classify_images.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {'state': task.state,
             'current': 0,

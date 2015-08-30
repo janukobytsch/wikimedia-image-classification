@@ -48,8 +48,22 @@ that the repository name is in front of your shell promt now.
         export LC_ALL=en_US.UTF-8
         export LANG=en_US.UTF-8
 
-7. Run the flask app on port 5000 by default.
+To get the webapp running, you will need to open three terminal windows.
 
+7.  On the first terminal, run Redis which is used as a task queue:
+
+        tools/run-redis.sh
+
+    Note that for the above script to work you need to have gcc installed. Also note that the above command is blocking, Redis will start in the foreground.
+
+8. On the second terminal run a Celery worker, which should be installed in the virtual environment:
+
+        source bin/activate
+        bin/celery worker -A app.celery --loglevel=INFO
+
+9. Finally, on the third terminal window run the Flask application on port 5000 by default.
+
+        source bin/activate
         python run.py
 
 ### Windows
