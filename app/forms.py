@@ -1,7 +1,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Required
 
 
 class SuggestForm(Form):
-    keywords = StringField('keywords', validators=[DataRequired()])
+    keywords = StringField('keywords', validators=[Required(), DataRequired()])
