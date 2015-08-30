@@ -12,7 +12,7 @@ from helper.image import is_supported, UnsupportedImageError, ImageLoadingError
 
 class Dataset:
 
-    def __init__(self, logging=False):
+    def __init__(self, logging=False, extractors=None):
         self.logging = logging
         self.data = None
         self.target = None
@@ -20,6 +20,7 @@ class Dataset:
         self.samples = None
         self.means = None
         self.stds = None
+        self.extractors = None
 
     def read(self, root, extractors):
         root = root.strip('/\\')
@@ -103,20 +104,30 @@ class Dataset:
             self.stds = scaler.std_.tolist()
         self.data = scaler.transform(self.data, copy=False)
 
-    def _read_samples(self, root):
+    def _read_samples(self, root, no_sub_directories=False):
         assert os.path.isdir(root)
         row = '| {: <20} | {: >10} |'
         self._log(row.format('label', 'samples'))
         self._log(row.format('-' * 20, '-' * 10))
         self.samples = []
-        for label in self._walk_directories(root):
-            directory = os.path.join(root, label)
+        if not no_sub_directories:
+            for label in self._walk_directories(root):
+                directory = os.path.join(root, label)
+                filenames = list(self._walk_images(directory))
+                self._log(row.format(label, str(len(filenames))))
+                for filename in filenames:
+                    full_filename = os.path.join(directory, filename)
+                    sample = Sample(full_filename, label)
+                    self.samples.append(sample)
+        else:
+            directory = root
             filenames = list(self._walk_images(directory))
             self._log(row.format(label, str(len(filenames))))
             for filename in filenames:
                 full_filename = os.path.join(directory, filename)
                 sample = Sample(full_filename, label)
                 self.samples.append(sample)
+
         self._log('')
         return self.samples
 
