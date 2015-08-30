@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
     <link rel="stylesheet" href="/static/css/bootstrap-image-gallery.min.css">
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/custom.css" rel="stylesheet">
     <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="/static/css/custom.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -58,18 +58,30 @@
         <!-- /.container -->
     </nav>
 
-    <!-- Page Content -->
-    <div id="bg-task-results" class="content-section-a">
+    <!-- page content -->
+    <a name="about"></a>
+    <div id="bg-task-results" class="content-section-b">
         <div class="container">
             <div class="row">
                 <div class=".col-md-12">
+                    <hr class="section-heading-spacer left" />
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">We found these images for '{{ search_term }}'</h2>
+                    <ul class="nav nav-pills orange">
+                        <li class="label-filter active" data-label-filter="all"><a href="#">all</a></li>
+                        {% for label in labels %}
+                        <li class="label-filter" data-label-filter="{{ loop.index-1 }}"><a href="#">{{ label }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <hr />
+                    <p class="lead empty">No images for this category.</p>
                     <div id="gallery-elements"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- The Bootstrap Image Gallery lightbox -->
+    <!-- gallery lightbox -->
     <div id="blueimp-gallery" class="blueimp-gallery">
         <div class="slides"></div>
         <h3 class="title"></h3>
@@ -103,35 +115,29 @@
 
     <script src="/static/js/jquery.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
     <script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
     <script src="/static/js/bootstrap-image-gallery.min.js"></script>
     <script src="/static/js/nanobar.min.js"></script>
 
     <script>
         function show_progress() {
-            // var indicator = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
-            // $('#progress').append(indicator);
             var nanobar = new Nanobar({
                 bg: '#851326',
                 id: 'nanobar'
                 // global target
             });
-            //nanobar.go(25);
             return nanobar;
         }
 
         function show_result(data) {
             if ('result' in data) {
+                $('#bg-task-results').fadeIn(500);
                 if (data['result'].length > 0) {
-                    $('#bg-task-results').show();
                     for (var result in data['result']) {
-                        var url = data['result'][result];
-                        var element = $('<a href="' + url + '" title="Apple" data-gallery><img width="200" height="200" src="' + url + '" alt="Apple" data-category="default"></a>');
+                        var dict = data['result'][result];
+                        var element = $('<a href="' + dict['thumbnail'] + '" title="' + dict['title'] + '" data-label="' + dict['label'] + '" data-gallery><img width="200" height="200" src="' + dict['thumbnail'] + '" alt="' + dict['title'] + '"></a>');
                         $('#gallery-elements').append(element);
                     }
-                } else {
-                    // todo
                 }
             } else {
                 alert('Woops, something went wrong!');
@@ -152,8 +158,36 @@
             });
         }
 
+        $(".label-filter").click(function(){
+            $('.label-filter').each(function() {
+                if ($(this).hasClass('active')) {
+                    $(this).removeClass('active');
+                }
+            });
+            $(this).addClass('active');
+            var filter = $(this).attr("data-label-filter");
+            var num_filtered = 0;
+            $("a[data-label]").each(function() {
+                if (filter == 'all') {
+                    $(this).fadeIn(200);
+                    num_filtered++;
+                    return;
+                }
+                if ($(this).attr('data-label') == filter) {
+                    $(this).fadeIn(200);
+                    num_filtered++;
+                } else {
+                    $(this).fadeOut(200);
+                }
+            });
+            if (num_filtered == 0) {
+                $('.empty').fadeIn(200);
+            } else {
+                $('.empty').hide();
+            }
+        });
+
         $(function() {
-            $('#bg-task-results').hide();
             var nanobar = show_progress();
             update_progress('{{ status_url }}', nanobar);
         });

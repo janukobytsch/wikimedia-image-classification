@@ -23,7 +23,8 @@ def suggest():
             kwargs=task_args
         )
         status_url = url_for('.status', task_id=task.id)
-        return render_template('result.html', status_url=status_url)
+        labels = app.config['CATEGORY_LABELS']
+        return render_template('result.html', status_url=status_url, labels=labels, search_term=form.keywords.data)
     # form invalid
     return render_template('index.html', form=form)
 
