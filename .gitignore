@@ -1,5 +1,6 @@
-# Tool subdirectories
+# Deployment
 /tool/
+/downloads
 
 # Virtual environment
 /[Ii]nclude

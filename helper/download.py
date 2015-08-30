@@ -52,3 +52,10 @@ def ensure_directory(directory):
             os.makedirs(directory)
     except:
         print('Could not create', directory)
+
+
+def delete_directory(directory):
+    try:
+        shutil.rmtree(directory)
+    except:
+        print('Could not delete', directory)

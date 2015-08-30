@@ -1,6 +1,7 @@
 import os
 import json
 import helper.image as image
+from helper.dbpedia import METADATA
 
 
 class Sample:
@@ -81,12 +82,11 @@ class Sample:
 
     def _load_metadata(self):
         self._ensure('filename')
-        keys = ('url', 'title', 'description', 'extension', 'lat', 'long')
         filename = self._replace_extension(self.filename, 'json')
         try:
             with open(filename) as file_:
                 dictionary = json.load(file_)
-                assert set(dictionary.keys()) == set(keys), 'Invalid metadata'
+                assert set(dictionary.keys()) == METADATA.keys(), 'Invalid metadata'
                 self.metadata = True
         except IOError:
             self.metadata = False
