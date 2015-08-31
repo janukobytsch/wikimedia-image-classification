@@ -105,6 +105,6 @@ def execute_query(query):
     sparql = SPARQLWrapper('http://commons.dbpedia.org/sparql')
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
-    sparql.setTimeout(300)  # 5 minutes
+    sparql.setTimeout(60)  # one minute
     data = sparql.query().convert()
     return data
