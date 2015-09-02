@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import itertools
 from sklearn.feature_extraction.text import CountVectorizer
 from scipy.sparse import coo_matrix
@@ -23,6 +24,13 @@ class WordsFeature(Feature):
         self.logging = logging
         if samples:
             self._generate_vocabulary(samples, limit)
+
+    @staticmethod
+    def create_from(config_file):
+        feature = WordsFeature()
+        config = json.load(open(config_file))
+        feature.set_params(config)
+        return feature
 
     def name(self):
         return 'words'
