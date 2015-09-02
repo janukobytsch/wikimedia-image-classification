@@ -109,12 +109,13 @@
                     <form id="start-bg-job-form" action="{{ form.action }}" method="post">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
-                            {{ form.keywords(size=40) }}<br/>
-                              {% for error in form.keywords.errors %}
+                            {{ form.keywords(size=30) }}<br/>
+                            {% for error in form.keywords.errors %}
                                 <span style="color: red;">[{{ error }}]</span>
-                              {% endfor %}<br/>
+                            {% endfor %}
                         </div>
-                        <button id="start-bg-job-button" type="submit" class="btn btn-primary">Suggest images</button>
+                        <button id="start-bg-job-button" type="submit" class="btn btn-primary">Suggest images</button><br/><br/><br/>
+                        <p class="medium">(Please note that this may take up to a minute or so.)</p>
                     </form>
                 </div>
             </div>

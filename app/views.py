@@ -9,6 +9,7 @@ from .tasks import start_context_aware_task, classify_images
 def index():
     form = SuggestForm()
     form.action = url_for('.suggest')
+    form.keywords.value="test"
     return render_template('index.html', form=form)
 
 

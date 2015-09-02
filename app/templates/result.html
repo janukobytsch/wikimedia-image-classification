@@ -58,6 +58,9 @@
         <!-- /.container -->
     </nav>
 
+    <!-- loding animation window -->
+    <div class="loader"></div>
+
     <!-- page content -->
     <a name="about"></a>
     <div id="bg-task-results" class="content-section-b">
@@ -121,6 +124,9 @@
 
     <script>
         function show_progress() {
+            // create spinner
+            //$(window).spin();
+            // create loading bar on top
             var nanobar = new Nanobar({
                 bg: '#851326',
                 id: 'nanobar'
@@ -159,6 +165,7 @@
                 nanobar.go(percent);
                 if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                     show_result(data);
+                    $("body").removeClass("loading");
                 } else {
                     setTimeout(function() {
                         update_progress(status_url, nanobar);
@@ -195,6 +202,12 @@
         $(function() {
             var nanobar = show_progress();
             update_progress('{{ status_url }}', nanobar);
+        });
+
+        $(document).on({
+            ajaxStart: function() {
+                $("body").addClass("loading");
+            },
         });
     </script>
 </body>
