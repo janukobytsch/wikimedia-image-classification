@@ -57,7 +57,7 @@ def start_context_aware_task(func, kwargs={}):
 
 
 @celery.task(bind=True)
-def classify_images(self, keywords=[], limit=30):
+def classify_images(self, keywords=[], limit=25):
     """
     Worker task to retrieve a list of automatically categorized images from
     Wikimedia Commons from a given list of keywords.

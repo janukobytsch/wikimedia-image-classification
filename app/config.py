@@ -16,3 +16,5 @@ DATASET_CONFIG = os.path.join(CLASSIFIER_DIRECTORY, 'dataset.json')
 WORDS_CONFIG = os.path.join(CLASSIFIER_DIRECTORY, 'words.json')
 
 CATEGORY_LABELS = ['sign', 'chart', 'architecture', 'drawn', 'painting', 'social', 'portrait', 'screenshot', 'flag', 'vehicles', 'logo', 'document', 'object', 'scheme', 'map', 'icon', 'landscape', 'scenery']
+
+RANDOM_KEYWORDS = ['berlin', 'koblenz', 'potsdam', 'galileo', 'obama', 'darwin', 'audi', 'italy', 'solar', 'tokio']

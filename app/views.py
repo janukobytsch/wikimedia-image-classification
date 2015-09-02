@@ -2,14 +2,15 @@ from flask import render_template, flash, redirect, url_for, jsonify
 from app import app, celery
 from .forms import SuggestForm
 from .tasks import start_context_aware_task, classify_images
+import random
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    form = SuggestForm()
+    form = SuggestForm(default="true")
     form.action = url_for('.suggest')
-    form.keywords.value="test"
+    form.keywords.data = random.choice(app.config['RANDOM_KEYWORDS'])
     return render_template('index.html', form=form)
 
 
