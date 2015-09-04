@@ -12,13 +12,13 @@ METADATA = {
 }
 
 
-def fetch_uris_from_metadata(keywords, amount):
+def fetch_uris_from_metadata(keywords, amount, multiple=True):
     """
     Query DBpedia for image uris where one of the keywords is found in the
     'label' tag.
     """
     ontology = '<http://www.w3.org/2000/01/rdf-schema#label>'
-    uris = query_uris_from_keywords(ontology, keywords, amount)
+    uris = query_uris_from_keywords(ontology, keywords, amount, multiple=multiple)
     return uris
 
 
@@ -54,10 +54,10 @@ def fetch_properties(resource, properties):
         print('Error retrieving', resource.strip('<>'))
 
 
-def query_uris_from_keywords(ontology, keywords, amount):
-    print('Query image URIs for:', ','.join(keywords))
+def query_uris_from_keywords(ontology, keywords, amount, multiple=True):
     assert isinstance(ontology, str)
-    keywords = '|'.join(keywords)
+    keywords = '|'.join(keywords) if multiple else keywords
+    print('Query image URIs for:', keywords)
     keywords = r'(^|\\W)(' + keywords + r')(\\W|$)'
     filters = [
         '?uri {} ?object; rdf:type foaf:Image'.format(ontology),

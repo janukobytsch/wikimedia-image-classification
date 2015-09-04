@@ -100,7 +100,8 @@ def classify_images(self, keywords=[], limit=25):
         # query dpedia for related images based on given keywords
         if limit > app.config['QUERY_LIMIT']:
             limit = app.config['QUERY_LIMIT']
-        uris = fetch_uris_from_metadata(keywords, limit)
+        searchterm = ' '.join(keywords)
+        uris = fetch_uris_from_metadata(searchterm, limit, multiple=False)
         progress_observer.update(20)
 
         # download images and metadata into temp folder with unique task id
